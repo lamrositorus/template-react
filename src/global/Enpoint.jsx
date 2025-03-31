@@ -1,29 +1,16 @@
-import { CONFIG } from './Config';
+const BASE_URL = 'http://localhost:5000';
 
 export const Endpoint = {
-  dashboard: `${CONFIG.API_URL}/dashboard`,
-  aktivitas: `${CONFIG.API_URL}/aktivitas`,
-  login: `${CONFIG.API_URL}/user/login`,
-  signup: `${CONFIG.API_URL}/user/signup`,
-  profile: (id) => `${CONFIG.API_URL}/user/${id}`,
-  kategori: `${CONFIG.API_URL}/kategori`,
-  detailKategori: (id) => `${CONFIG.API_URL}/kategori/${id}`,
-
-  pemasok: `${CONFIG.API_URL}/pemasok`,
-  detailPemasok: (id) => `${CONFIG.API_URL}/pemasok/${id}`,
-  customer: `${CONFIG.API_URL}/customer`,
-  detailCustomer: (id) => `${CONFIG.API_URL}/customer/${id}`,
-  pembelian: `${CONFIG.API_URL}/pembelian`,
-  detailPembelian: (id) => `${CONFIG.API_URL}/pembelian/${id}`,
-  penjualan: `${CONFIG.API_URL}/penjualan`,
-  detailPenjualan: (id) => `${CONFIG.API_URL}/penjualan/${id}`,
-  stats: `${CONFIG.API_URL}/penjualan/stats`,
-  sparepart: `${CONFIG.API_URL}/sparepart`,
-  detailSparepart: (id) => `${CONFIG.API_URL}/sparepart/${id}`,
-
-  historyPenjualan: `${CONFIG.API_URL}/historypenjualan`,
-  historyPembelian: `${CONFIG.API_URL}/historypembelian`,
-  exportHistoryPenjualan: `${CONFIG.API_URL}/export/historypenjualan`,
-  exportHistoryPembelian: `${CONFIG.API_URL}/export/historypembelian`,
-  auth: `${CONFIG.API_URL}/auth/google`,
+  login: `${BASE_URL}/user/login`,
+  dashboard: `${BASE_URL}/dashboard`,
+  inventaris: `${BASE_URL}/inventaris`,
+  inventarisKategori: `${BASE_URL}/inventaris/kategori`,
+  inventarisMekanik: `${BASE_URL}/inventaris/mekanik`,
+  inventarisPengeluaran: `${BASE_URL}/inventaris/pengeluaran`,
+  inventarisModal: `${BASE_URL}/inventaris/modal`,
+  inventarisStok: `${BASE_URL}/inventaris/stok`,
+  inventarisSparepart: `${BASE_URL}/sparepart`,
+  inventarisSparepartById: (id) => `${BASE_URL}/sparepart/${id}`,
+  transaksi: `${BASE_URL}/transaksi`,
+  laporan: `${BASE_URL}/laporan`,
 };
