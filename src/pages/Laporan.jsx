@@ -4,7 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 import { FaChartLine } from 'react-icons/fa';
 import Navbar from '../pages/Header';
 import { API_Source } from '../global/Apisource';
-import Pagination from '../components/Pagination';
+import Pagination from '../components/Pagination.jsx';
 
 export const Laporan = () => {
   const [reportType, setReportType] = useState('daily');

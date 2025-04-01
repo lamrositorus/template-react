@@ -8,9 +8,9 @@ import 'react-toastify/dist/ReactToastify.css';
 import { FiShoppingCart } from 'react-icons/fi';
 
 import ConfirmModal from '../components/ConfirmationModalTransaction';
-import TotalProfit from '../components/TotalProfit';
-import TransactionForm from '../components/TransactionForm';
-import TransactionList from '../components/TransactionList';
+import TotalProfit from '../components/TotalProfit.jsx';
+import TransactionForm from '../components/TransactionForm.jsx';
+import TransactionList from '../components/TransactionList.jsx';
 
 export const TransactionPage = () => {
   const queryClient = useQueryClient();
