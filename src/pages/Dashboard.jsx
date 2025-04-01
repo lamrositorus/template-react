@@ -1,14 +1,14 @@
+// src/components/Dashboard.jsx
 import { useQuery } from '@tanstack/react-query';
 import { useEffect } from 'react';
-import { FaSignOutAlt, FaChartLine, FaBook } from 'react-icons/fa';
+import { FaBook, FaChartLine, FaSignOutAlt } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
-
 import { API_Source } from '../global/Apisource';
 
 export const Dashboard = () => {
   const navigate = useNavigate();
 
-  // Penanganan token dari Google OAuth tetap menggunakan useEffect
+  // Penanganan token dari Google OAuth
   useEffect(() => {
     const queryParams = new URLSearchParams(location.search);
     const tokenFromGoogle = queryParams.get('token');
@@ -16,18 +16,17 @@ export const Dashboard = () => {
     if (tokenFromGoogle) {
       localStorage.setItem('token', tokenFromGoogle);
       console.log('Token saved from Google OAuth:', tokenFromGoogle);
-      // Hapus query parameter dari URL tanpa reload
       navigate('/dashboard', { replace: true });
     }
   }, [navigate]);
 
-  // Pengambilan data dashboard menggunakan useQuery dari react-query
+  // Pengambilan data dashboard
   const {
     data: dashboardData,
     isLoading,
     error,
   } = useQuery({
-    queryKey: ['dashboard'], // Kunci unik untuk cache
+    queryKey: ['dashboard'],
     queryFn: async () => {
       const data = await API_Source.getDashboard();
       return data;
@@ -47,84 +46,114 @@ export const Dashboard = () => {
   };
 
   return (
-    <div className="min-h-screen bg-base-200 flex items-center justify-center p-6">
-      <div className="card w-full max-w-md bg-base-100 shadow-xl border border-base-300">
-        <div className="card-body p-8">
-          {/* Header */}
-          <h1 className="text-3xl font-bold text-center mb-8 text-primary tracking-tight flex items-center justify-center">
-            <FaChartLine className="mr-2" /> Dashboard
-          </h1>
-
-          {/* Konten Dashboard */}
-          {isLoading ? (
-            <div className="space-y-6">
-              <div className="skeleton h-12 w-full rounded-md"></div>
-              <div className="skeleton h-12 w-full rounded-md"></div>
-              <div className="skeleton h-12 w-full rounded-md"></div>
-            </div>
-          ) : error ? (
-            <div className="alert alert-error shadow-md">
-              <span className="font-medium">Error: {error.message}</span>
-            </div>
-          ) : dashboardData ? (
-            <div className="space-y-6">
-              {/* Laporan Mekanik */}
-              <div className="bg-base-200 p-4 rounded-lg shadow-inner">
-                <h2 className="text-xl font-semibold text-primary mb-3 flex items-center">
-                  <FaBook className="mr-2" /> Laporan Mekanik
-                </h2>
-                <div className="space-y-2">
-                  <p className="text-sm">
-                    <span className="font-medium">Total Harga Jual:</span>{' '}
-                    {dashboardData.data.laporan_mekanik.totals.total_harga_jual}
-                  </p>
-                  <p className="text-sm">
-                    <span className="font-medium">Total Keuntungan:</span>{' '}
-                    {dashboardData.data.laporan_mekanik.totals.total_keuntungan}
-                  </p>
-                  <p className="text-sm">
-                    <span className="font-medium">Total Ongkos Pasang:</span>{' '}
-                    {dashboardData.data.laporan_mekanik.totals.total_ongkos_pasang}
-                  </p>
-                </div>
-              </div>
-
-              {/* Laporan Buku Harian */}
-              <div className="bg-base-200 p-4 rounded-lg shadow-inner">
-                <h2 className="text-xl font-semibold text-primary mb-3 flex items-center">
-                  <FaBook className="mr-2" /> Laporan Buku Harian
-                </h2>
-                <div className="space-y-2">
-                  <p className="text-sm">
-                    <span className="font-medium">Modal Awal:</span>{' '}
-                    {dashboardData.data.laporan_buku_harian.totals.modal_awal}
-                  </p>
-                  <p className="text-sm">
-                    <span className="font-medium">Total Keuntungan:</span>{' '}
-                    {dashboardData.data.laporan_buku_harian.totals.total_keuntungan}
-                  </p>
-                  <p className="text-sm">
-                    <span className="font-medium">Net Keuntungan:</span>{' '}
-                    {dashboardData.data.laporan_buku_harian.totals.net_keuntungan}
-                  </p>
-                </div>
-              </div>
-            </div>
-          ) : (
-            <p className="text-center text-base-content opacity-70">
-              Tidak ada data untuk ditampilkan.
-            </p>
-          )}
-
-          {/* Tombol Logout */}
-          <button
-            onClick={handleLogout}
-            className="btn btn-secondary w-full mt-6 hover:btn-secondary-focus transition-all duration-300 flex items-center justify-center"
-          >
-            <FaSignOutAlt className="mr-2" /> Logout
-          </button>
+    <div className="min-h-screen bg-base-200 p-4 md:p-6 ">
+      {/* Header */}
+      <h1 className="text-3xl font-bold text-primary text-center mb-6 flex items-center justify-center">
+        <FaChartLine className="mr-2" /> Dashboard
+      </h1>
+{/* Divider */}
+<div className="divider max-w-2xl mx-auto">Laporan Penjualan Mekanik</div>
+      {/* Konten Dashboard */}
+      {isLoading ? (
+        <div className="space-y-6">
+          <div className="skeleton h-32 w-full rounded-md"></div>
+          <div className="skeleton h-32 w-full rounded-md"></div>
         </div>
+      ) : error ? (
+        <div className="alert alert-error shadow-md max-w-2xl mx-auto">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="stroke-current shrink-0 h-6 w-6"
+            fill="none"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
+              d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
+            />
+          </svg>
+          <span className="font-medium">Error: {error.message}</span>
+        </div>
+      ) : dashboardData ? (
+        <div className="space-y-6">
+          {/* Laporan Mekanik */}
+          <div className="stats stats-vertical md:stats-horizontal shadow bg-base-100 w-full">
+            <div className="stat">
+              <div className="stat-figure text-primary">
+                <FaBook className="text-3xl" />
+              </div>
+              <div className="stat-title text-2xl font-semibold">Total Harga Jual</div>
+              <div className="stat-value text-3xl">
+                {dashboardData.data.laporan_mekanik.totals.total_harga_jual}
+              </div>
+              <div className="stat-desc">Laporan Mekanik</div>
+            </div>
+            <div className="stat">
+              <div className="stat-title text-2xl font-semibold">Total Keuntungan</div>
+              <div className="stat-value text-3xl">
+                {dashboardData.data.laporan_mekanik.totals.total_keuntungan}
+              </div>
+              <div className="stat-desc">Laporan Mekanik</div>
+            </div>
+            <div className="stat">
+              <div className="stat-title text-2xl font-semibold">Total Ongkos Pasang</div>
+              <div className="stat-value text-3xl">
+                {dashboardData.data.laporan_mekanik.totals.total_ongkos_pasang}
+              </div>
+              <div className="stat-desc">Laporan Mekanik</div>
+            </div>
+          </div>
+
+          {/* Divider */}
+          <div className="divider max-w-2xl mx-auto">Laporan Buku Harian</div>
+
+          {/* Laporan Buku Harian */}
+          <div className="stats stats-vertical md:stats-horizontal shadow bg-base-100 w-full">
+            <div className="stat">
+              <div className="stat-figure text-primary">
+                <FaBook className="text-3xl" />
+              </div>
+              <div className="stat-title text-2xl font-semibold">Modal Awal</div>
+              <div className="stat-value text-3xl">
+                {dashboardData.data.laporan_buku_harian.totals.modal_awal}
+              </div>
+              <div className="stat-desc">Buku Harian</div>
+            </div>
+            <div className="stat">
+              <div className="stat-title text-2xl font-semibold">Total Keuntungan</div>
+              <div className="stat-value text-3xl">
+                {dashboardData.data.laporan_buku_harian.totals.total_keuntungan}
+              </div>
+              <div className="stat-desc">Buku Harian</div>
+            </div>
+            <div className="stat">
+              <div className="stat-title text-2xl font-semibold">Net Keuntungan</div>
+              <div className="stat-value text-3xl">
+                {dashboardData.data.laporan_buku_harian.totals.net_keuntungan}
+              </div>
+              <div className="stat-desc">Buku Harian</div>
+            </div>
+          </div>
+        </div>
+      ) : (
+        <p className="text-center text-base-content opacity-70 max-w-2xl mx-auto">
+          Tidak ada data untuk ditampilkan.
+        </p>
+      )}
+
+      {/* Tombol Logout */}
+      <div className="mt-6 flex justify-center">
+        <button
+          onClick={handleLogout}
+          className="btn btn-secondary btn-wide hover:bg-secondary-focus transition-all duration-300 flex items-center"
+        >
+          <FaSignOutAlt className="mr-2" /> Logout
+        </button>
       </div>
     </div>
   );
 };
+
+export default Dashboard;

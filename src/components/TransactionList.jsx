@@ -1,14 +1,12 @@
-// src/components/TransactionList.jsx
 import { format } from 'date-fns';
 import React, { useState } from 'react';
 import { FiList } from 'react-icons/fi';
-import Pagination from './Pagination'; // Asumsi Pagination sudah ada
+import Pagination from './Pagination';
 
 const TransactionList = ({ transaksiData, sparepartData }) => {
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 5; // Maksimum 10 item per halaman
+  const itemsPerPage = 5;
 
-  // Hitung data untuk halaman saat ini
   const totalItems = transaksiData?.transactions?.length || 0;
   const totalPages = Math.ceil(totalItems / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
@@ -33,10 +31,10 @@ const TransactionList = ({ transaksiData, sparepartData }) => {
                 <th className="text-xs sm:text-sm">Pelanggan</th>
                 <th className="text-xs sm:text-sm">Sparepart</th>
                 <th className="text-xs sm:text-sm">Jumlah</th>
-                <th className="text-xs sm:text-sm">Harga</th>
-                <th className="text-xs sm:text-sm">Total</th>
-                <th className="text-xs sm:text-sm">Keuntungan</th>
-                <th className="text-xs sm:text-sm">Pembayaran</th>
+                <th className="text-xs sm:text-sm">Harga (Kode)</th>
+                <th className="text-xs sm:text-sm">Total (Kode)</th>
+                <th className="text-xs sm:text-sm">Keuntungan (Kode)</th>
+                <th className="text-xs sm:text-sm">Pembayaran (Kode)</th>
                 <th className="text-xs sm:text-sm">Tanggal</th>
               </tr>
             </thead>
@@ -57,20 +55,12 @@ const TransactionList = ({ transaksiData, sparepartData }) => {
                     {t.items.map((item) => `${item.jumlah}x`).join(', ')}
                   </td>
                   <td className="font-bold text-xs sm:text-sm">
-                    {t.items
-                      .map((item) => `Rp${(item.harga_jual || 0).toLocaleString('id-ID')}`)
-                      .join(', ')}
+                    {t.items.map((item) => item.harga_jual).join(', ')}
                   </td>
-                  <td className="font-bold text-xs sm:text-sm">
-                    Rp{(t.total_pembayaran || 0).toLocaleString('id-ID')}
-                  </td>
-                  <td className="text-success font-bold text-xs sm:text-sm">
-                    +Rp{(t.keuntungan || 0).toLocaleString('id-ID')}
-                  </td>
+                  <td className="font-bold text-xs sm:text-sm">{t.total_pembayaran}</td>
+                  <td className="text-success font-bold text-xs sm:text-sm">{t.keuntungan}</td>
                   <td className="text-xs sm:text-sm">
-                    <div className="badge badge-success">
-                      Rp{(t.uang_masuk || 0).toLocaleString('id-ID')}
-                    </div>
+                    <div className="badge badge-success">{t.uang_masuk}</div>
                   </td>
                   <td className="text-xs sm:text-sm">
                     {format(new Date(t.created_at), 'dd/MM/yy HH:mm')}
@@ -81,7 +71,6 @@ const TransactionList = ({ transaksiData, sparepartData }) => {
           </table>
         </div>
 
-        {/* Pagination */}
         {totalItems > 0 && (
           <Pagination
             totalItems={totalItems}

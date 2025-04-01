@@ -13,4 +13,5 @@ export const Endpoint = {
   inventarisSparepartById: (id) => `${BASE_URL}/sparepart/${id}`,
   transaksi: `${BASE_URL}/transaksi`,
   laporan: `${BASE_URL}/laporan`,
+  laporanMekanik: `${BASE_URL}/laporan_penjualan_mekanik`,
 };

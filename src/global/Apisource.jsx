@@ -42,10 +42,14 @@ export class API_Source {
     }
   }
 
-  static async getDashboard() {
+  static async getDashboard(params = {}) {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(Endpoint.dashboard, {
+      const url = new URL(Endpoint.dashboard); // Misalnya, http://localhost:5000/dashboard
+      Object.keys(params).forEach((key) => url.searchParams.append(key, params[key]));
+      
+      console.log('Request URL:', url.toString()); // Debug
+      const response = await fetch(url, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -62,6 +66,9 @@ export class API_Source {
       throw new Error(error.message);
     }
   }
+
+
+
 
   static async getAllInventaris() {
     try {
@@ -128,6 +135,7 @@ export class API_Source {
       throw new Error(error.message);
     }
   }
+  
 
   static async createPengeluaran(jumlah, deskripsi) {
     try {
@@ -558,4 +566,52 @@ export class API_Source {
       throw new Error(error.message);
     }
   }
+  static async getLaporanMekanik({ mekanik_id, start_date, end_date }) {
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) throw new Error('No authentication token found');
+
+      const queryParams = new URLSearchParams();
+      if (mekanik_id) queryParams.append('mekanik_id', mekanik_id);
+      if (start_date) queryParams.append('start_date', start_date);
+      if (end_date) queryParams.append('end_date', end_date);
+
+      const url = `${Endpoint.laporanMekanik}?${queryParams.toString()}`;
+      console.log('Fetching laporan mekanik dari URL:', url); // Debug URL
+
+      const response = await fetch(url, {
+        method: 'GET',
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      });
+
+      console.log('Response status:', response.status); // Debug status
+      console.log('Response headers:', Object.fromEntries(response.headers.entries())); // Debug header
+
+      const text = await response.text();
+      console.log('Raw laporan mekanik response:', text); // Respons mentah
+
+      // Periksa Content-Type
+      const contentType = response.headers.get('Content-Type');
+      if (!contentType || !contentType.includes('application/json')) {
+        throw new Error(`Server returned non-JSON response: ${text.substring(0, 50)}...`);
+      }
+
+      if (!response.ok) {
+        const errorData = text ? JSON.parse(text) : { message: `Server error: ${response.status}` };
+        throw new Error(errorData.message);
+      }
+
+      const data = JSON.parse(text);
+      console.log('laporan_mekanik: ', data.message);
+      return data;
+    } catch (error) {
+      console.error('Get laporan mekanik error:', error);
+      throw new Error(error.message);
+    }
+  }
+
+
 }

@@ -30,7 +30,7 @@ export const Navbar = () => {
           </button>
         </div>
         <div className="hidden lg:flex lg:flex-none">
-          <ul className="menu menu-horizontal p-0 ">
+          <ul className="menu menu-horizontal p-0">
             <li>
               <Link to="/dashboard">Home</Link>
             </li>
@@ -55,14 +55,11 @@ export const Navbar = () => {
                 className="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52"
               >
                 <li>
-                  <Link to="/laporan/daily/2025-03-25">Harian</Link>
-                </li>
-                {/* <li>
-                  <Link to="/laporan/weekly/2025-03-20/2025-03-27">Mingguan</Link>
+                  <Link to="/laporan/daily/2025-03-25">Laporan Harian</Link>
                 </li>
                 <li>
-                  <Link to="/laporan/monthly/2025/03">Bulanan</Link>
-                </li> */}
+                  <Link to="/laporan/mekanik">Laporan Mekanik</Link>
+                </li>
               </ul>
             </li>
             <li>

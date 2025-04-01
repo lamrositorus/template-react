@@ -10,7 +10,7 @@ const TotalProfit = ({ totalKeuntungan }) => {
         </div>
         <div className="stat-title">Total Keuntungan</div>
         <div className="stat-value text-lg sm:text-2xl">
-          Rp{(totalKeuntungan || 0).toLocaleString('id-ID')}
+          Rp. {(totalKeuntungan || 0).toLocaleString('id-ID')}
         </div>
       </div>
     </div>

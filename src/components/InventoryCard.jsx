@@ -108,7 +108,7 @@ const InventoryCard = ({
         <div className="flex justify-between items-center mb-4">
           <h2 className="card-title text-lg font-bold">
             {icon} {title}
-            <span className={`badge badge-${color} ml-2`}>Total: {filteredData.length}</span>
+            <span className={`badge  ml-2`}>Total: {filteredData.length}</span>
           </h2>
           <div className="flex gap-2">
             <button

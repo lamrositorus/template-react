@@ -5,3 +5,5 @@ export * from './Inventaris.jsx';
 export * from './Sparepart.jsx';
 export * from './Transaksi.jsx';
 export * from './Laporan.jsx';
+export * from './LaporanMekanik.jsx';
+export * from './About.jsx';
