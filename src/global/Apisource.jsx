@@ -47,7 +47,7 @@ export class API_Source {
       const token = localStorage.getItem('token');
       const url = new URL(Endpoint.dashboard); // Misalnya, http://localhost:5000/dashboard
       Object.keys(params).forEach((key) => url.searchParams.append(key, params[key]));
-      
+
       console.log('Request URL:', url.toString()); // Debug
       const response = await fetch(url, {
         headers: {
@@ -66,9 +66,6 @@ export class API_Source {
       throw new Error(error.message);
     }
   }
-
-
-
 
   static async getAllInventaris() {
     try {
@@ -135,7 +132,6 @@ export class API_Source {
       throw new Error(error.message);
     }
   }
-  
 
   static async createPengeluaran(jumlah, deskripsi) {
     try {
@@ -612,6 +608,4 @@ export class API_Source {
       throw new Error(error.message);
     }
   }
-
-
 }

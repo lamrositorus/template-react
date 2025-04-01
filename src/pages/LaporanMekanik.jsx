@@ -11,7 +11,12 @@ export const LaporanMekanik = () => {
     end_date: '',
   });
 
-  const { data: laporanResponse, isLoading: laporanLoading, error: laporanError, refetch } = useQuery({
+  const {
+    data: laporanResponse,
+    isLoading: laporanLoading,
+    error: laporanError,
+    refetch,
+  } = useQuery({
     queryKey: ['laporanMekanik', filters],
     queryFn: () => {
       console.log('Sending filters to API:', filters);
@@ -27,7 +32,11 @@ export const LaporanMekanik = () => {
     },
   });
 
-  const { data: mekanikData, isLoading: mekanikLoading, error: mekanikError } = useQuery({
+  const {
+    data: mekanikData,
+    isLoading: mekanikLoading,
+    error: mekanikError,
+  } = useQuery({
     queryKey: ['mekanik'],
     queryFn: () => API_Source.getMekanik(),
   });
@@ -149,7 +158,9 @@ export const LaporanMekanik = () => {
                           </tr>
                         ))
                       ) : (
-                        <tr><td colSpan="5">Tidak ada data</td></tr>
+                        <tr>
+                          <td colSpan="5">Tidak ada data</td>
+                        </tr>
                       )}
                     </tbody>
                   </table>

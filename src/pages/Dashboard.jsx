@@ -51,8 +51,8 @@ export const Dashboard = () => {
       <h1 className="text-3xl font-bold text-primary text-center mb-6 flex items-center justify-center">
         <FaChartLine className="mr-2" /> Dashboard
       </h1>
-{/* Divider */}
-<div className="divider max-w-2xl mx-auto">Laporan Penjualan Mekanik</div>
+      {/* Divider */}
+      <div className="divider max-w-2xl mx-auto">Laporan Penjualan Mekanik</div>
       {/* Konten Dashboard */}
       {isLoading ? (
         <div className="space-y-6">

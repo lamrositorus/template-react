@@ -4,11 +4,11 @@ import { API_Source } from '../global/Apisource';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { FiPackage, FiSearch } from 'react-icons/fi';
-import CloseHandler from '../components/CloseHandler';
-import ConfirmationModal from '../components/ConfirmationModal';
-import InventoryTable from '../components/InventoryTable';
-import InventoryForm from '../components/InventoryForm';
-import Pagination from '../components/Pagination';
+import CloseHandler from '../components/CloseHandler.jsx';
+import ConfirmationModal from '../components/ConfirmationModal.jsx';
+import InventoryTable from '../components/InventoryTable.jsx';
+import InventoryForm from '../components/InventoryForm.jsx';
+import Pagination from '../components/Pagination.jsx';
 
 export const Sparepart = () => {
   const queryClient = useQueryClient();

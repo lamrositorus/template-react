@@ -2,7 +2,16 @@ import './App.css';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 
-import { Login, Dashboard,About, InventoryPage, Sparepart, TransactionPage, Laporan, LaporanMekanik } from './pages';
+import {
+  Login,
+  Dashboard,
+  About,
+  InventoryPage,
+  Sparepart,
+  TransactionPage,
+  Laporan,
+  LaporanMekanik,
+} from './pages';
 import Footer from './pages/Footer';
 import Header from './pages/Header';
 import 'react-toastify/dist/ReactToastify.css';

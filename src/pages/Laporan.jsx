@@ -16,14 +16,32 @@ export const Laporan = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
 
-  const { data: laporanResponse, error, refetch, isFetching } = useQuery({
+  const {
+    data: laporanResponse,
+    error,
+    refetch,
+    isFetching,
+  } = useQuery({
     queryKey: [
       'report',
       reportType,
-      { date: dailyDate, startDate: weeklyStart, endDate: weeklyEnd, year: monthlyYear, month: monthlyMonth },
+      {
+        date: dailyDate,
+        startDate: weeklyStart,
+        endDate: weeklyEnd,
+        year: monthlyYear,
+        month: monthlyMonth,
+      },
     ],
     queryFn: async () => {
-      console.log('Fetching report with:', { reportType, dailyDate, weeklyStart, weeklyEnd, monthlyYear, monthlyMonth });
+      console.log('Fetching report with:', {
+        reportType,
+        dailyDate,
+        weeklyStart,
+        weeklyEnd,
+        monthlyYear,
+        monthlyMonth,
+      });
       switch (reportType) {
         case 'daily':
           if (!dailyDate) throw new Error('Tanggal harus diisi');
@@ -45,7 +63,14 @@ export const Laporan = () => {
   });
 
   const laporanData = laporanResponse?.data || laporanResponse || null;
-  console.log('isFetching:', isFetching, 'laporanResponse:', laporanResponse, 'laporanData:', laporanData);
+  console.log(
+    'isFetching:',
+    isFetching,
+    'laporanResponse:',
+    laporanResponse,
+    'laporanData:',
+    laporanData,
+  );
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -234,9 +259,7 @@ export const Laporan = () => {
                 <div className="stats stats-vertical sm:stats-horizontal shadow mt-6 w-full">
                   <div className="stat">
                     <div className="stat-title">Modal Awal (Kode)</div>
-                    <div className="stat-value text-primary">
-                      {laporanData.modal_awal || 'L'}
-                    </div>
+                    <div className="stat-value text-primary">{laporanData.modal_awal || 'L'}</div>
                   </div>
                   <div className="stat">
                     <div className="stat-title">Total Keuntungan (Kode)</div>
@@ -253,7 +276,9 @@ export const Laporan = () => {
                 </div>
               </>
             ) : (
-              <div className="text-center text-gray-500">Silakan pilih filter dan tekan "Tampilkan Laporan"</div>
+              <div className="text-center text-gray-500">
+                Silakan pilih filter dan tekan "Tampilkan Laporan"
+              </div>
             )}
           </div>
         </motion.div>

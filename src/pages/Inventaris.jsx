@@ -4,9 +4,9 @@ import { API_Source } from '../global/Apisource';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { FiPackage, FiUsers, FiDollarSign, FiBox } from 'react-icons/fi';
-import CloseHandler from '../components/CloseHandler';
-import ConfirmationModal from '../components/ConfirmationModal';
-import InventoryCard from '../components/InventoryCard';
+import CloseHandler from '../components/closeHandler.jsx';
+import ConfirmationModal from '../components/ConfirmationModal.jsx';
+import InventoryCard from '../components/InventoryCard.jsx';
 
 export const InventoryPage = () => {
   const queryClient = useQueryClient();

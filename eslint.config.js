@@ -71,6 +71,14 @@ export default [
       'react/prop-types': 'off',
       'react/jsx-filename-extension': [1, { extensions: ['.jsx', '.js'] }],
       'react/react-in-jsx-scope': 'off',
+      'import/extensions': [
+        'error',
+        'always',
+        {
+          js: 'never', // Tidak pakai .js untuk file JS
+          jsx: 'always', // Pakai .jsx untuk file JSX
+        },
+      ],
       'import/order': [
         'error',
         {
