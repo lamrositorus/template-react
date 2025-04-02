@@ -241,7 +241,20 @@ const TransactionForm = ({ formData, setFormData, sparepartData, mekanikData, on
               <span className="label-text ml-2">Grosir (Diskon 10%)</span>
             </label>
           </div>
-
+          <div className="form-control">
+            <label className="label">
+              <span className="label-text flex items-center gap-2">🔧 Ongkos Pasang</span>
+            </label>
+            <input
+              type="number"
+              name="ongkos_pasang"
+              value={formData.ongkos_pasang}
+              onChange={handleInputChange}
+              className="input input-bordered w-full"
+              min="0"
+              step="0.01"
+            />
+          </div>
           <div className="form-control">
             <label className="label">
               <span className="label-text flex items-center gap-2">
@@ -260,20 +273,7 @@ const TransactionForm = ({ formData, setFormData, sparepartData, mekanikData, on
             />
           </div>
 
-          <div className="form-control">
-            <label className="label">
-              <span className="label-text flex items-center gap-2">🔧 Ongkos Pasang</span>
-            </label>
-            <input
-              type="number"
-              name="ongkos_pasang"
-              value={formData.ongkos_pasang}
-              onChange={handleInputChange}
-              className="input input-bordered w-full"
-              min="0"
-              step="0.01"
-            />
-          </div>
+
 
           <div className="form-control">
             <label className="label">
