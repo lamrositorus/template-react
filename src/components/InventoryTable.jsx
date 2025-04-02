@@ -33,27 +33,31 @@ const InventoryTable = ({
 
   const [editingId, setEditingId] = useState(null);
   const [editKode, setEditKode] = useState('');
+  const [editNama, setEditNama] = useState(''); // State baru untuk edit nama
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [deleteItemId, setDeleteItemId] = useState(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [editItem, setEditItem] = useState(null);
   const kodeInputRef = useRef(null);
+  const namaInputRef = useRef(null); // Ref baru untuk input nama
 
   const handleEditClick = (item) => {
     setEditingId(item.id);
     setEditKode(item.kode);
-    console.log('Mengedit item:', { id: item.id, kode: item.kode });
+    setEditNama(item.nama); // Set nama awal untuk edit
+    console.log('Mengedit item:', { id: item.id, kode: item.kode, nama: item.nama });
   };
 
   useEffect(() => {
-    if (editingId && kodeInputRef.current) {
-      kodeInputRef.current.focus();
+    if (editingId) {
+      if (kodeInputRef.current) kodeInputRef.current.focus();
+      else if (namaInputRef.current) namaInputRef.current.focus();
     }
   }, [editingId]);
 
-  const handleEditSubmit = (id) => {
-    console.log('Submit edit - id:', id, 'editKode:', editKode);
-    setEditItem({ id, kode: editKode });
+  const handleEditSubmit = (id, field) => {
+    console.log('Submit edit - id:', id, 'field:', field, 'editKode:', editKode, 'editNama:', editNama);
+    setEditItem({ id, kode: editKode, nama: editNama, field }); // Tambah field untuk tentukan edit apa
     setIsEditModalOpen(true);
   };
 
@@ -62,8 +66,8 @@ const InventoryTable = ({
     try {
       const updatedSparepart = await API_Source.updateSparepart(
         editItem.id,
-        undefined,
-        editItem.kode,
+        editItem.field === 'nama' ? editItem.nama : undefined, // Update nama jika field = nama
+        editItem.field === 'kode' ? editItem.kode : undefined, // Update kode jika field = kode
         undefined,
         undefined,
       );
@@ -73,7 +77,7 @@ const InventoryTable = ({
         throw new Error('Respons API tidak valid');
       }
 
-      toast.success('Kode sparepart berhasil diperbarui!');
+      toast.success(`${editItem.field === 'nama' ? 'Nama' : 'Kode'} sparepart berhasil diperbarui!`);
 
       if (queryClient) {
         await queryClient.invalidateQueries(['spareparts']);
@@ -91,7 +95,7 @@ const InventoryTable = ({
       setIsEditModalOpen(false);
       setEditItem(null);
     } catch (error) {
-      toast.error(`Gagal memperbarui kode sparepart: ${error.message}`);
+      toast.error(`Gagal memperbarui ${editItem.field === 'nama' ? 'nama' : 'kode'} sparepart: ${error.message}`);
       console.error('Error saat update:', error);
       setIsEditModalOpen(false);
     }
@@ -224,7 +228,31 @@ const InventoryTable = ({
           return editingId === item.id ? (
             <tr key={item.id}>
               <td className="border px-4 py-2">{item.id}</td>
-              <td className="border px-4 py-2">{item.nama}</td>
+              <td className="border px-4 py-2">
+                <div className="flex items-center gap-2">
+                  <input
+                    type="text"
+                    value={editNama}
+                    onChange={(e) => setEditNama(e.target.value)}
+                    className="input input-bordered input-sm w-full max-w-xs"
+                    ref={namaInputRef}
+                  />
+                  <button
+                    onClick={() => handleEditSubmit(item.id, 'nama')} // Submit untuk nama
+                    className="btn btn-sm btn-ghost text-success tooltip"
+                    data-tip="Simpan Nama"
+                  >
+                    <FiSave size={18} />
+                  </button>
+                  <button
+                    onClick={() => setEditingId(null)}
+                    className="btn btn-sm btn-ghost text-error tooltip"
+                    data-tip="Batal"
+                  >
+                    <FiX size={18} />
+                  </button>
+                </div>
+              </td>
               <td className="border px-4 py-2">
                 <div className="flex items-center gap-2">
                   <input
@@ -235,9 +263,9 @@ const InventoryTable = ({
                     ref={kodeInputRef}
                   />
                   <button
-                    onClick={() => handleEditSubmit(item.id)}
+                    onClick={() => handleEditSubmit(item.id, 'kode')} // Submit untuk kode
                     className="btn btn-sm btn-ghost text-success tooltip"
-                    data-tip="Simpan"
+                    data-tip="Simpan Kode"
                   >
                     <FiSave size={18} />
                   </button>
@@ -284,7 +312,7 @@ const InventoryTable = ({
                   <button
                     onClick={() => handleEditClick(item)}
                     className="btn btn-sm btn-ghost text-primary hover:bg-primary hover:text-white tooltip"
-                    data-tip="Edit Kode"
+                    data-tip="Edit Nama/Kode"
                   >
                     <FiEdit size={18} />
                   </button>
@@ -369,8 +397,8 @@ const InventoryTable = ({
         isOpen={isEditModalOpen}
         onClose={() => setIsEditModalOpen(false)}
         modalContent={{
-          type: 'edit_sparepart_kode',
-          data: editItem ? { id: editItem.id, kode: editItem.kode } : {},
+          type: 'edit_sparepart_kode', // Bisa digunakan untuk kode atau nama
+          data: editItem ? { id: editItem.id, kode: editItem.kode, nama: editItem.nama } : {},
         }}
         setInventaris={setData}
         queryClient={queryClient}

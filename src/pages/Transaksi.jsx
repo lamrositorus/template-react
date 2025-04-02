@@ -1,12 +1,9 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import React, { useState } from 'react';
-
 import { API_Source } from '../global/Apisource';
-
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { FiShoppingCart } from 'react-icons/fi';
-
 import ConfirmModal from '../components/ConfirmationModalTransaction';
 import TotalProfit from '../components/TotalProfit.jsx';
 import TransactionForm from '../components/TransactionForm.jsx';
@@ -15,7 +12,6 @@ import TransactionList from '../components/TransactionList.jsx';
 export const TransactionPage = () => {
   const queryClient = useQueryClient();
   const [showConfirmModal, setShowConfirmModal] = useState(false);
-
   const [formData, setFormData] = useState({
     nama_pelanggan: '',
     mekanik_id: '',
@@ -64,7 +60,7 @@ export const TransactionPage = () => {
     },
   });
 
-  const confirmTransaction = () => {
+  const confirmTransaction = async () => {
     const payload = {
       nama_pelanggan: formData.nama_pelanggan,
       mekanik_id: formData.mekanik_id || null,
@@ -73,8 +69,8 @@ export const TransactionPage = () => {
       uang_masuk: parseFloat(formData.uang_masuk),
       ongkos_pasang: parseFloat(formData.ongkos_pasang) || 0,
     };
-    console.log('payload sent: ', JSON.stringify(payload));
-    createTransaksiMutation.mutate(payload);
+    console.log('Payload sent:', JSON.stringify(payload));
+    await createTransaksiMutation.mutateAsync(payload); // Gunakan mutateAsync untuk pastikan await
   };
 
   if (transaksiLoading || mekanikLoading || sparepartLoading) {
