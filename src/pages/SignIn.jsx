@@ -71,6 +71,11 @@ export const Login = () => {
     loginMutation.mutate({ username, password });
   };
 
+  const handleGoogleLogin = () => {
+    // Redirect langsung ke rute Google OAuth
+    window.location.href = 'https://sparepart-alma.vercel.app/user/auth/google';
+  };
+
   return (
     <div className="min-h-screen bg-base-200 flex items-center justify-center p-6">
       {showAlert && (
@@ -140,13 +145,14 @@ export const Login = () => {
               </button>
 
               <div className="flex justify-center mt-4">
-                <a
-                  href="https://sparepart-alma.vercel.app/user/auth/google" // Perbaikan: ke rute awal
+                <button
+                  type="button" // Ganti dari <a> ke <button>
+                  onClick={handleGoogleLogin}
                   className="btn btn-outline"
                 >
                   <img src="/icons8-google.svg" alt="Google Logo" className="w-5 h-5 mr-2" />
                   Login with Google
-                </a>
+                </button>
               </div>
             </form>
           )}
@@ -162,3 +168,4 @@ export const Login = () => {
     </div>
   );
 };
+
