@@ -144,7 +144,7 @@ export const Login = () => {
               </button>
 
               <div className="flex justify-center mt-4">
-                <a href="http://localhost:5000/user/auth/google" className="btn btn-outline">
+                <a href="https://sparepart-lac.vercel.app/user/auth/google/callback" className="btn btn-outline">
                   <img src="/icons8-google.svg" alt="Google Logo" className="w-5 h-5 mr-2" />
                   Login with Google
                 </a>
