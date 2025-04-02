@@ -15,6 +15,7 @@ export const Login = () => {
   useEffect(() => {
     const query = new URLSearchParams(location.search);
     const token = query.get('token');
+    const error = query.get('error');
     if (token) {
       localStorage.setItem('token', token);
       setAlertMessage('Login dengan Google berhasil!');
@@ -24,8 +25,19 @@ export const Login = () => {
         navigate('/dashboard');
         setShowAlert(false);
       }, 1000);
+    } else if (error === 'unauthorized') {
+      setAlertMessage('Email Anda tidak diizinkan untuk login.');
+      setAlertType('error');
+      setShowAlert(true);
+      setTimeout(() => setShowAlert(false), 3000);
+    } else if (error === 'google_auth_failed') {
+      setAlertMessage('Gagal login dengan Google. Coba lagi.');
+      setAlertType('error');
+      setShowAlert(true);
+      setTimeout(() => setShowAlert(false), 3000);
     }
   }, [location, navigate]);
+
 
   const loginMutation = useMutation({
     mutationFn: ({ username, password }) => API_Source.login(username, password),
