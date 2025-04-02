@@ -1,4 +1,3 @@
-// src/components/Navbar.jsx
 import { motion } from 'framer-motion';
 import React, { useState, useEffect } from 'react';
 import { FaBars, FaTimes } from 'react-icons/fa';
@@ -23,9 +22,13 @@ export const Navbar = () => {
 
   return (
     <>
-      <nav className="navbar bg-base-100 shadow-lg fixed top-0 z-50">
+      <nav className="navbar bg-base-100 shadow-lg fixed top-0 z-50 w-full">
         <div className="flex-none lg:hidden">
-          <button onClick={handleClick} className="btn btn-ghost">
+          <button
+            onClick={handleClick}
+            className="btn btn-ghost"
+            aria-label={isOpen ? 'Tutup menu' : 'Buka menu'}
+          >
             {isOpen ? <FaTimes /> : <FaBars />}
           </button>
         </div>
@@ -43,13 +46,10 @@ export const Navbar = () => {
             <li>
               <Link to="/transaksi">Transaksi</Link>
             </li>
-            <li
-              className="dropdown dropdown-hover tooltip tooltip-bottom"
-              data-tip="Lihat opsi laporan"
-            >
-              <Link tabIndex={0} to="/laporan" className="flex items-center">
+            <li className="dropdown tooltip tooltip-bottom" data-tip="Klik untuk lihat opsi laporan">
+              <div tabIndex={0} role="button" className="flex items-center">
                 Laporan
-              </Link>
+              </div>
               <ul
                 tabIndex={0}
                 className="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52"
@@ -78,7 +78,7 @@ export const Navbar = () => {
           animate={{ height: 'auto', opacity: 1 }}
           exit={{ height: 0, opacity: 0 }}
           transition={{ duration: 0.3 }}
-          className="lg:hidden bg-base-100 shadow-lg absolute top-16 left-0 w-full z-40"
+          className="lg:hidden bg-base-100 shadow-lg w-full sticky top-16 z-40"
         >
           <ul className="menu p-2">
             <li>
@@ -101,10 +101,25 @@ export const Navbar = () => {
                 Transaksi
               </Link>
             </li>
-            <li>
-              <Link to="/laporan" onClick={handleClick}>
+            <li className="dropdown">
+              <div tabIndex={0} role="button" className="flex items-center">
                 Laporan
-              </Link>
+              </div>
+              <ul
+                tabIndex={0}
+                className="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52"
+              >
+                <li>
+                  <Link to="/laporan/daily/2025-03-25" onClick={handleClick}>
+                    Laporan Harian
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/laporan/mekanik" onClick={handleClick}>
+                    Laporan Mekanik
+                  </Link>
+                </li>
+              </ul>
             </li>
             <li>
               <Link to="/about" onClick={handleClick}>
