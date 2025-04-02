@@ -1,7 +1,6 @@
 import { useMutation } from '@tanstack/react-query';
 import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-
 import { API_Source } from '../global/Apisource';
 
 export const Login = () => {
@@ -13,7 +12,6 @@ export const Login = () => {
   const [alertMessage, setAlertMessage] = useState('');
   const [alertType, setAlertType] = useState('success');
 
-  // Penanganan token dari Google OAuth tetap menggunakan useEffect
   useEffect(() => {
     const query = new URLSearchParams(location.search);
     const token = query.get('token');
@@ -29,11 +27,9 @@ export const Login = () => {
     }
   }, [location, navigate]);
 
-  // useMutation untuk login
   const loginMutation = useMutation({
     mutationFn: ({ username, password }) => API_Source.login(username, password),
     onMutate: () => {
-      // Set loading state sebelum request dikirim
       setShowAlert(false);
     },
     onSuccess: (userData) => {
@@ -144,7 +140,10 @@ export const Login = () => {
               </button>
 
               <div className="flex justify-center mt-4">
-                <a href="https://sparepart-lac.vercel.app/user/auth/google/callback" className="btn btn-outline">
+                <a
+                  href="https://sparepart-lac.vercel.app/user/auth/google" // Perbaikan: ke rute awal
+                  className="btn btn-outline"
+                >
                   <img src="/icons8-google.svg" alt="Google Logo" className="w-5 h-5 mr-2" />
                   Login with Google
                 </a>
