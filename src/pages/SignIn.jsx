@@ -141,7 +141,7 @@ export const Login = () => {
 
               <div className="flex justify-center mt-4">
                 <a
-                  href="https://sparepart-lac.vercel.app/user/auth/google" // Perbaikan: ke rute awal
+                  href="https://sparepart-alma.vercel.app/user/auth/google" // Perbaikan: ke rute awal
                   className="btn btn-outline"
                 >
                   <img src="/icons8-google.svg" alt="Google Logo" className="w-5 h-5 mr-2" />
