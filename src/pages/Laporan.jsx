@@ -63,14 +63,7 @@ export const Laporan = () => {
   });
 
   const laporanData = laporanResponse?.data || laporanResponse || null;
-  console.log(
-    'isFetching:',
-    isFetching,
-    'laporanResponse:',
-    laporanResponse,
-    'laporanData:',
-    laporanData,
-  );
+  console.log('isFetching:', isFetching, 'laporanData:', laporanData);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -79,12 +72,12 @@ export const Laporan = () => {
     refetch();
   };
 
-  const totalItems = laporanData?.buku_harian?.length || 0;
+  const totalItems = laporanData?.transactions?.length || 0;
   const totalPages = Math.ceil(totalItems / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = Math.min(startIndex + itemsPerPage, totalItems);
-  const paginatedBukuHarian = laporanData?.buku_harian?.slice(startIndex, endIndex) || [];
-  console.log('paginatedBukuHarian:', paginatedBukuHarian);
+  const paginatedTransactions = laporanData?.transactions?.slice(startIndex, endIndex) || [];
+  console.log('paginatedTransactions:', paginatedTransactions);
 
   const handlePageChange = (page) => {
     setCurrentPage(page);
@@ -218,24 +211,32 @@ export const Laporan = () => {
                   <table className="table table-zebra w-full">
                     <thead>
                       <tr>
-                        <th>Kode</th>
-                        <th>Harga Jual (Kode)</th>
-                        <th>Harga Jual Grosir (Kode)</th>
-                        <th>Jumlah</th>
-                        <th>Keuntungan (Kode)</th>
+                        <th>Transaksi ID</th>
+                        <th>Nama Pelanggan</th>
+                        <th>Items</th>
+                        <th>Total Pembayaran</th>
+                        <th>Keuntungan</th>
                         <th>Tanggal</th>
                       </tr>
                     </thead>
                     <tbody>
-                      {paginatedBukuHarian.length > 0 ? (
-                        paginatedBukuHarian.map((item) => (
-                          <tr key={item.id} className="transition-all">
-                            <td>{item.kode}</td>
-                            <td>{item.harga_jual || '-'}</td>
-                            <td>{item.harga_jual_grosir || '-'}</td>
-                            <td>{item.jumlah}</td>
-                            <td>{item.keuntungan}</td>
-                            <td>{new Date(item.created_at).toLocaleDateString()}</td>
+                      {paginatedTransactions.length > 0 ? (
+                        paginatedTransactions.map((transaksi) => (
+                          <tr key={transaksi.id} className="transition-all">
+                            <td>{transaksi.id}</td>
+                            <td>{transaksi.nama_pelanggan}</td>
+                            <td>
+                              <ul className="list-disc pl-4">
+                                {transaksi.items.map((item, index) => (
+                                  <li key={index}>
+                                    {item.nama} ({item.kode}) - Jumlah: {item.jumlah}, Harga: {item.harga_jual}
+                                  </li>
+                                ))}
+                              </ul>
+                            </td>
+                            <td>{transaksi.total_pembayaran}</td>
+                            <td>{transaksi.keuntungan}</td>
+                            <td>{new Date(transaksi.created_at).toLocaleDateString()}</td>
                           </tr>
                         ))
                       ) : (
@@ -247,7 +248,7 @@ export const Laporan = () => {
                   </table>
                 </div>
 
-                {totalItems > 0 && (
+                {totalItems > itemsPerPage && (
                   <Pagination
                     totalItems={totalItems}
                     currentPage={currentPage}

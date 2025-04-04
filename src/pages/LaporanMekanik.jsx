@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { FaChartLine, FaFilter } from 'react-icons/fa';
 import { Navbar } from '../pages/Header';
 import { API_Source } from '../global/Apisource';
+import Pagination from '../components/Pagination.jsx';
 
 export const LaporanMekanik = () => {
   const [filters, setFilters] = useState({
@@ -10,6 +11,8 @@ export const LaporanMekanik = () => {
     start_date: '',
     end_date: '',
   });
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
 
   const {
     data: laporanResponse,
@@ -49,8 +52,19 @@ export const LaporanMekanik = () => {
 
   const handleFilterSubmit = (e) => {
     e.preventDefault();
+    setCurrentPage(1); // Reset ke halaman pertama saat filter baru diterapkan
     console.log('Filter submitted:', filters);
     refetch();
+  };
+
+  const totalItems = laporanData?.laporan?.length || 0;
+  const totalPages = Math.ceil(totalItems / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = Math.min(startIndex + itemsPerPage, totalItems);
+  const paginatedLaporan = laporanData?.laporan?.slice(startIndex, endIndex) || [];
+
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
   };
 
   return (
@@ -147,8 +161,8 @@ export const LaporanMekanik = () => {
                       </tr>
                     </thead>
                     <tbody>
-                      {laporanData?.laporan?.length > 0 ? (
-                        laporanData.laporan.map((row) => (
+                      {paginatedLaporan.length > 0 ? (
+                        paginatedLaporan.map((row) => (
                           <tr key={row.id} className="transition-all">
                             <td>{row.id}</td>
                             <td>{row.final_harga_jual}</td>
@@ -165,6 +179,15 @@ export const LaporanMekanik = () => {
                     </tbody>
                   </table>
                 </div>
+
+                {totalItems > itemsPerPage && (
+                  <Pagination
+                    totalItems={totalItems}
+                    currentPage={currentPage}
+                    itemsPerPage={itemsPerPage}
+                    onPageChange={handlePageChange}
+                  />
+                )}
 
                 <div className="stats stats-vertical sm:stats-horizontal shadow mt-6 w-full">
                   <div className="stat">
