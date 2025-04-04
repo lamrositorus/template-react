@@ -15,10 +15,12 @@ import {
 import Footer from './pages/Footer';
 import Header from './pages/Header';
 import 'react-toastify/dist/ReactToastify.css';
+import { themeChange } from 'theme-change';
+
 
 function App() {
   return (
-    <div className="flex flex-col min-h-screen">
+    <div data-theme="retro" className="flex flex-col min-h-screen">
       <Router>
         <Header />
         <ToastContainer />

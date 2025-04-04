@@ -208,26 +208,26 @@ export const Laporan = () => {
               </div>
             ) : laporanData ? (
               <>
-                <div className="overflow-x-auto">
+                <div className="overflow-x-auto text-left">
                   <table className="table table-zebra w-full">
                     <thead>
                       <tr>
-                        <th>Transaksi ID</th>
-                        <th>Nama Pelanggan</th>
-                        <th>Items</th>
-                        <th>Total Pembayaran</th>
-                        <th>Keuntungan</th>
-                        <th>Tanggal</th>
+                        <th className="text-center">Transaksi ID</th>
+                        <th className="text-center">Nama</th>
+                        <th className="text-center">Items</th>
+                        <th className="text-center">Total</th>
+                        <th className="text-center">Keuntungan</th>
+                        <th className="text-center">Tanggal</th>
                       </tr>
                     </thead>
                     <tbody>
                       {paginatedTransactions.length > 0 ? (
                         paginatedTransactions.map((transaksi) => (
                           <tr key={transaksi.id} className="transition-all">
-                            <td>{transaksi.id}</td>
-                            <td>{transaksi.nama_pelanggan}</td>
-                            <td>
-                              <ul className="list-disc pl-4">
+                            <td className="text-center">{transaksi.id}</td>
+                            <td className="text-center">{transaksi.nama_pelanggan}</td>
+                            <td className="text-center">
+                              <ul className="list-disc pl-4 text-left">
                                 {transaksi.items.map((item, index) => (
                                   <li key={index}>
                                     {item.nama} ({item.kode}) - Jumlah: {item.jumlah}, Harga: {item.harga_jual}
@@ -235,14 +235,16 @@ export const Laporan = () => {
                                 ))}
                               </ul>
                             </td>
-                            <td>{transaksi.total_pembayaran}</td>
-                            <td>{transaksi.keuntungan}</td>
-                    {format(new Date(transaksi.created_at), 'dd/MM/yy HH:mm')}
+                            <td className="text-center">{transaksi.total_pembayaran}</td>
+                            <td className="text-center">{transaksi.keuntungan}</td>
+                            <td className="text-center">
+                              {format(new Date(transaksi.created_at), 'dd/MM/yy HH:mm')}
+                            </td>
                           </tr>
                         ))
                       ) : (
                         <tr>
-                          <td colSpan="6">Tidak ada data</td>
+                          <td colSpan="6" className="text-center">Tidak ada data</td>
                         </tr>
                       )}
                     </tbody>

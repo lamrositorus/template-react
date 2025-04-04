@@ -1,10 +1,12 @@
 import { useQuery } from '@tanstack/react-query';
 import React, { useState } from 'react';
+import { motion } from 'framer-motion';
 import { FaChartLine, FaFilter } from 'react-icons/fa';
 import { Navbar } from '../pages/Header';
 import { API_Source } from '../global/Apisource';
 import Pagination from '../components/Pagination.jsx';
 import { format } from 'date-fns';
+
 export const LaporanMekanik = () => {
   const [filters, setFilters] = useState({
     mekanik_id: '',
@@ -46,32 +48,67 @@ export const LaporanMekanik = () => {
 
   const laporanData = laporanResponse?.data;
 
+  // Mengelompokkan data per transaksi berdasarkan mekanik_id, nama_customer, dan created_at
+  const groupedTransactions = () => {
+    if (!laporanData?.laporan) return [];
+    const grouped = laporanData.laporan.reduce((acc, row) => {
+      const key = `${row.mekanik_id}-${row.nama_customer}-${row.created_at}`;
+      if (!acc[key]) {
+        acc[key] = {
+          id: row.id, // Gunakan ID pertama sebagai representasi
+          mekanik_id: row.mekanik_id,
+          nama_customer: row.nama_customer,
+          created_at: row.created_at,
+          items: [],
+          ongkos_pasang: row.ongkos_pasang, // Ambil ongkos_pasang dari item pertama (asumsi sama per transaksi)
+        };
+      }
+      acc[key].items.push({
+        kode: row.kode,
+        final_harga_jual: row.final_harga_jual,
+      });
+      return acc;
+    }, {});
+    return Object.values(grouped);
+  };
+
+  const transactions = groupedTransactions();
+  const totalItems = transactions.length;
+  const totalPages = Math.ceil(totalItems / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = Math.min(startIndex + itemsPerPage, totalItems);
+  const paginatedTransactions = transactions.slice(startIndex, endIndex);
+
   const handleFilterChange = (e) => {
     setFilters({ ...filters, [e.target.name]: e.target.value });
   };
 
   const handleFilterSubmit = (e) => {
     e.preventDefault();
-    setCurrentPage(1); // Reset ke halaman pertama saat filter baru diterapkan
+    setCurrentPage(1);
     console.log('Filter submitted:', filters);
     refetch();
   };
 
-  const totalItems = laporanData?.laporan?.length || 0;
-  const totalPages = Math.ceil(totalItems / itemsPerPage);
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const endIndex = Math.min(startIndex + itemsPerPage, totalItems);
-  const paginatedLaporan = laporanData?.laporan?.slice(startIndex, endIndex) || [];
-
   const handlePageChange = (page) => {
     setCurrentPage(page);
+  };
+
+  const getMekanikName = (mekanikId) => {
+    const mekanik = mekanikData?.find((m) => m.id === mekanikId);
+    return mekanik?.nama || 'Unknown';
   };
 
   return (
     <div className="min-h-screen bg-base-200">
       <Navbar />
       <div className="pt-16 p-4 sm:p-6">
-        <div className="card bg-base-100 shadow-xl rounded-box animate-fade-in mx-auto max-w-5xl">
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="card bg-base-100 shadow-xl rounded-box animate-fade-in mx-auto max-w-5xl"
+        >
           <div className="card-body">
             <h1 className="text-3xl font-bold text-primary flex items-center justify-center mb-6">
               <FaChartLine className="mr-2" /> Laporan Penjualan Mekanik
@@ -149,31 +186,45 @@ export const LaporanMekanik = () => {
               </div>
             ) : (
               <>
-                <div className="overflow-x-auto">
+                <div className="overflow-x-auto text-left">
                   <table className="table table-zebra w-full">
                     <thead>
                       <tr>
-                        <th>ID</th>
-                        <th>Harga Jual (Kode)</th>
-                        <th>Keuntungan (Kode)</th>
-                        <th>Ongkos Pasang (Kode)</th>
-                        <th>Tanggal</th>
+                        <th className="text-center">Transaksi ID</th>
+                        <th className="text-center">Nama</th>
+                        <th className="text-center">Items</th>
+                        <th className="text-center">Ongkos Pasang (Kode)</th>
+                        <th className="text-center">Tanggal</th>
                       </tr>
                     </thead>
                     <tbody>
-                      {paginatedLaporan.length > 0 ? (
-                        paginatedLaporan.map((row) => (
-                          <tr key={row.id} className="transition-all">
-                            <td>{row.id}</td>
-                            <td>{row.final_harga_jual}</td>
-                            <td>{row.keuntungan}</td>
-                            <td>{row.ongkos_pasang}</td>
-                    {format(new Date(row.created_at), 'dd/MM/yy HH:mm')}
+                      {paginatedTransactions.length > 0 ? (
+                        paginatedTransactions.map((transaksi) => (
+                          <tr key={transaksi.id} className="transition-all">
+                            <td className="text-center">{transaksi.id}</td>
+                            <td className="text-center">
+                              {`${getMekanikName(transaksi.mekanik_id)}/${transaksi.nama_customer}`}
+                            </td>
+                            <td className="text-center">
+                              <ul className="list-disc pl-4 text-left">
+                                {transaksi.items.map((item, index) => (
+                                  <li key={index}>
+                                    {item.kode} - Harga: {item.final_harga_jual}
+                                  </li>
+                                ))}
+                              </ul>
+                            </td>
+                            <td className="text-center">{transaksi.ongkos_pasang}</td>
+                            <td className="text-center">
+                              {format(new Date(transaksi.created_at), 'dd/MM/yy HH:mm')}
+                            </td>
                           </tr>
                         ))
                       ) : (
                         <tr>
-                          <td colSpan="5">Tidak ada data</td>
+                          <td colSpan="5" className="text-center">
+                            Tidak ada data
+                          </td>
                         </tr>
                       )}
                     </tbody>
@@ -212,7 +263,7 @@ export const LaporanMekanik = () => {
               </>
             )}
           </div>
-        </div>
+        </motion.div>
       </div>
     </div>
   );

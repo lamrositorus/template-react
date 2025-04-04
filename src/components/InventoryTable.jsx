@@ -293,21 +293,21 @@ const InventoryTable = ({
             </tr>
           ) : (
             <tr key={item.id}>
-              <td className="border px-4 py-2">{item.id}</td>
-              <td className="border px-4 py-2">{item.nama}</td>
-              <td className="border px-4 py-2">{item.kode}</td>
-              <td className="border px-4 py-2">{item.kode_beli || '-'}</td>
-              <td className="border px-4 py-2">
+              <td className=" px-4 py-2">{item.id}</td>
+              <td className=" px-4 py-2">{item.nama}</td>
+              <td className=" px-4 py-2">{item.kode}</td>
+              <td className=" px-4 py-2">{item.kode_beli || '-'}</td>
+              <td className=" px-4 py-2">
                 {getKategoriName ? getKategoriName(item.kategori_id) : '-'}
               </td>
-              <td className="border px-4 py-2">{item.stok}</td>
-              <td className="border px-4 py-2">
+              <td className=" px-4 py-2">{item.stok}</td>
+              <td className=" px-4 py-2">
                 {item.harga_beli !== undefined ? item.harga_beli.toLocaleString('id-ID') : '-'}
               </td>
-              <td className="border px-4 py-2">
+              <td className=" px-4 py-2">
                 {item.harga_jual !== undefined ? item.harga_jual.toLocaleString('id-ID') : '-'}
               </td>
-              <td className="border px-4 py-2">
+              <td className=" px-4 py-2">
                 <div className="flex gap-2">
                   <button
                     onClick={() => handleEditClick(item)}
@@ -323,47 +323,47 @@ const InventoryTable = ({
         case 'kategori':
           return (
             <tr key={item.id}>
-              <td className="border px-4 py-2">{item.id}</td>
-              <td className="border px-4 py-2">{item.nama}</td>
-              <td className="border px-4 py-2">{formatDate(item.created_at)}</td>
+              <td className=" px-4 py-2">{item.id}</td>
+              <td className=" px-4 py-2">{item.nama}</td>
+              <td className=" px-4 py-2">{formatDate(item.created_at)}</td>
             </tr>
           );
         case 'mekanik':
           return (
             <tr key={item.id}>
-              <td className="border px-4 py-2">{item.id}</td>
-              <td className="border px-4 py-2">{item.nama}</td>
-              <td className="border px-4 py-2">{formatDate(item.created_at)}</td>
+              <td className=" px-4 py-2">{item.id}</td>
+              <td className=" px-4 py-2">{item.nama}</td>
+              <td className=" px-4 py-2">{formatDate(item.created_at)}</td>
             </tr>
           );
         case 'pengeluaran':
           return (
             <tr key={item.id}>
-              <td className="border px-4 py-2">{item.id}</td>
-              <td className="border px-4 py-2">{item.jumlah.toLocaleString('id-ID')}</td>
-              <td className="border px-4 py-2">{item.deskripsi}</td>
-              <td className="border px-4 py-2">{formatDate(item.created_at)}</td>
+              <td className=" px-4 py-2">{item.id}</td>
+              <td className=" px-4 py-2">{item.jumlah.toLocaleString('id-ID')}</td>
+              <td className=" px-4 py-2">{item.deskripsi}</td>
+              <td className=" px-4 py-2">{formatDate(item.created_at)}</td>
             </tr>
           );
         case 'modal':
           return (
             <tr key={item.id}>
-              <td className="border px-4 py-2">{item.id}</td>
-              <td className="border px-4 py-2">{item.jumlah.toLocaleString('id-ID')}</td>
-              <td className="border px-4 py-2">{formatDate(item.tanggal)}</td>
-              <td className="border px-4 py-2">{formatDate(item.created_at)}</td>
+              <td className=" px-4 py-2">{item.id}</td>
+              <td className=" px-4 py-2">{item.jumlah.toLocaleString('id-ID')}</td>
+              <td className=" px-4 py-2">{formatDate(item.tanggal)}</td>
+              <td className=" px-4 py-2">{formatDate(item.created_at)}</td>
             </tr>
           );
         case 'stok_masuk':
           return (
             <tr key={item.id}>
-              <td className="border px-4 py-2">{item.id}</td>
-              <td className="border px-4 py-2">
+              <td className=" px-4 py-2">{item.id}</td>
+              <td className=" px-4 py-2">
                 {getSparepartName ? getSparepartName(item.sperpat_id) : '-'}
               </td>
-              <td className="border px-4 py-2">{item.jumlah}</td>
-              <td className="border px-4 py-2">{item.keterangan || '-'}</td>
-              <td className="border px-4 py-2">{formatDate(item.created_at)}</td>
+              <td className=" px-4 py-2">{item.jumlah}</td>
+              <td className=" px-4 py-2">{item.keterangan || '-'}</td>
+              <td className=" px-4 py-2">{formatDate(item.created_at)}</td>
             </tr>
           );
         default:
@@ -375,7 +375,7 @@ const InventoryTable = ({
   return (
     <>
       <div className="overflow-x-auto">
-        <table className="table w-full">
+        <table className="table table-zebra w-full">
           <thead>{renderTableHeader()}</thead>
           <tbody>{renderTableBody()}</tbody>
         </table>

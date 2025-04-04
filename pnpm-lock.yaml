@@ -53,6 +53,9 @@ importers:
       react-window:
         specifier: ^1.8.11
         version: 1.8.11(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
+      theme-change:
+        specifier: ^2.5.0
+        version: 2.5.0
     devDependencies:
       '@eslint/js':
         specifier: ^9.23.0
@@ -1841,6 +1844,9 @@ packages:
   tapable@2.2.1:
     resolution: {integrity: sha512-GNzQvQTOIP6RyTfE2Qxb8ZVlNmw0n88vp1szwWRimP02mnTsx3Wtn5qRdqY9w2XduFNUgvOwhNnQsjwCp+kqaQ==}
     engines: {node: '>=6'}
+
+  theme-change@2.5.0:
+    resolution: {integrity: sha512-B/UdsgdHAGhSKHTAQnxg/etN0RaMDpehuJmZIjLMDVJ6DGIliRHGD6pODi1CXLQAN9GV0GSyB3G6yCuK05PkPQ==}
 
   tsconfig-paths@3.15.0:
     resolution: {integrity: sha512-2Ac2RgzDe/cn48GvOe3M+o82pEFewD3UPbyoUHHdKasHwJKjds4fLXWf/Ux5kATBKN20oaFGu+jbElp1pos0mg==}
@@ -3791,6 +3797,8 @@ snapshots:
   tailwindcss@4.0.17: {}
 
   tapable@2.2.1: {}
+
+  theme-change@2.5.0: {}
 
   tsconfig-paths@3.15.0:
     dependencies:
