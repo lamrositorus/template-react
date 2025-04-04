@@ -46,38 +46,30 @@ export const LaporanMekanik = () => {
     queryFn: () => API_Source.getMekanik(),
   });
 
-  const laporanData = laporanResponse?.data;
+  const {
+    data: sparepartResponse,
+    isLoading: sparepartLoading,
+    error: sparepartError,
+  } = useQuery({
+    queryKey: ['sparepart'],
+    queryFn: () => API_Source.getSparepart(),
+    onSuccess: (data) => {
+      console.log('Sparepart data received:', data);
+    },
+  });
 
-  // Mengelompokkan data per transaksi berdasarkan mekanik_id, nama_customer, dan created_at
-  const groupedTransactions = () => {
-    if (!laporanData?.laporan) return [];
-    const grouped = laporanData.laporan.reduce((acc, row) => {
-      const key = `${row.mekanik_id}-${row.nama_customer}-${row.created_at}`;
-      if (!acc[key]) {
-        acc[key] = {
-          id: row.id, // Gunakan ID pertama sebagai representasi
-          mekanik_id: row.mekanik_id,
-          nama_customer: row.nama_customer,
-          created_at: row.created_at,
-          items: [],
-          ongkos_pasang: row.ongkos_pasang, // Ambil ongkos_pasang dari item pertama (asumsi sama per transaksi)
-        };
-      }
-      acc[key].items.push({
-        kode: row.kode,
-        final_harga_jual: row.final_harga_jual,
-      });
-      return acc;
-    }, {});
-    return Object.values(grouped);
-  };
-
-  const transactions = groupedTransactions();
+  const laporanData = laporanResponse?.data || {};
+  const sparepartData = sparepartResponse?.data || []; // Akses array di dalam properti data
+  const transactions = laporanData.laporan || [];
   const totalItems = transactions.length;
   const totalPages = Math.ceil(totalItems / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = Math.min(startIndex + itemsPerPage, totalItems);
-  const paginatedTransactions = transactions.slice(startIndex, endIndex);
+  const paginatedTransactions = transactions.map((transaksi) => ({
+    ...transaksi,
+    nama_sparepart:
+      sparepartData.find((sp) => sp.id === transaksi.sperpat_id)?.nama || 'Unknown',
+  })).slice(startIndex, endIndex);
 
   const handleFilterChange = (e) => {
     setFilters({ ...filters, [e.target.name]: e.target.value });
@@ -175,14 +167,16 @@ export const LaporanMekanik = () => {
               </button>
             </form>
 
-            {laporanLoading ? (
+            {laporanLoading || sparepartLoading ? (
               <div className="space-y-4">
                 <div className="skeleton h-12 w-full"></div>
                 <div className="skeleton h-64 w-full"></div>
               </div>
-            ) : laporanError ? (
+            ) : laporanError || sparepartError ? (
               <div className="alert alert-error shadow-md">
-                <span className="font-medium">Error: {laporanError.message}</span>
+                <span className="font-medium">
+                  Error: {laporanError?.message || sparepartError?.message}
+                </span>
               </div>
             ) : (
               <>
@@ -203,20 +197,16 @@ export const LaporanMekanik = () => {
                           <tr key={transaksi.id} className="transition-all">
                             <td className="text-center">{transaksi.id}</td>
                             <td className="text-center">
-                              {`${getMekanikName(transaksi.mekanik_id)}/${transaksi.nama_customer}`}
+                              {`${getMekanikName(transaksi.mekanik_id)}/${transaksi.nama_customer || 'Unknown'}`}
                             </td>
                             <td className="text-center">
-                              <ul className="list-disc pl-4 text-left">
-                                {transaksi.items.map((item, index) => (
-                                  <li key={index}>
-                                    {item.kode} - Harga: {item.final_harga_jual}
-                                  </li>
-                                ))}
-                              </ul>
+                              {transaksi.nama_sparepart} - Harga: {transaksi.final_harga_jual || 'A'}
                             </td>
-                            <td className="text-center">{transaksi.ongkos_pasang}</td>
+                            <td className="text-center">{transaksi.ongkos_pasang || 'A'}</td>
                             <td className="text-center">
-                              {format(new Date(transaksi.created_at), 'dd/MM/yy HH:mm')}
+                              {transaksi.created_at
+                                ? format(new Date(transaksi.created_at), 'dd/MM/yy HH:mm')
+                                : 'Unknown'}
                             </td>
                           </tr>
                         ))
@@ -244,19 +234,19 @@ export const LaporanMekanik = () => {
                   <div className="stat">
                     <div className="stat-title">Total Harga Jual (Kode)</div>
                     <div className="stat-value text-primary">
-                      {laporanData?.total_harga_jual || 'A'}
+                      {laporanData.total_harga_jual || 'A'}
                     </div>
                   </div>
                   <div className="stat">
                     <div className="stat-title">Total Keuntungan (Kode)</div>
                     <div className="stat-value text-success">
-                      {laporanData?.total_keuntungan || 'A'}
+                      {laporanData.total_keuntungan || 'A'}
                     </div>
                   </div>
                   <div className="stat">
                     <div className="stat-title">Total Ongkos Pasang (Kode)</div>
                     <div className="stat-value text-secondary">
-                      {laporanData?.total_ongkos_pasang || 'A'}
+                      {laporanData.total_ongkos_pasang || 'A'}
                     </div>
                   </div>
                 </div>
