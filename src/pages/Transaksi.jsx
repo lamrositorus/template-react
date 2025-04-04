@@ -9,6 +9,7 @@ import TotalProfit from '../components/TotalProfit.jsx';
 import TransactionForm from '../components/TransactionForm.jsx';
 import TransactionList from '../components/TransactionList.jsx';
 
+
 export const TransactionPage = () => {
   const queryClient = useQueryClient();
   const [showConfirmModal, setShowConfirmModal] = useState(false);
