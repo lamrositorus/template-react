@@ -1,10 +1,9 @@
 import { useMutation } from '@tanstack/react-query';
 import { useState, useEffect } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useLocation } from 'react-router-dom'; // Masih digunakan untuk location.search
 import { API_Source } from '../global/Apisource';
 
 export const Login = () => {
-  const navigate = useNavigate();
   const location = useLocation();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -22,7 +21,7 @@ export const Login = () => {
       setAlertType('success');
       setShowAlert(true);
       setTimeout(() => {
-        navigate('/dashboard');
+        window.location.href = '/dashboard'; // Ganti navigate dengan window.location.href
         setShowAlert(false);
       }, 1000);
     } else if (error === 'unauthorized') {
@@ -36,8 +35,7 @@ export const Login = () => {
       setShowAlert(true);
       setTimeout(() => setShowAlert(false), 3000);
     }
-  }, [location, navigate]);
-
+  }, [location]); // Hapus navigate dari dependency array
 
   const loginMutation = useMutation({
     mutationFn: ({ username, password }) => API_Source.login(username, password),
@@ -54,7 +52,7 @@ export const Login = () => {
       setPassword('');
 
       setTimeout(() => {
-        navigate('/dashboard');
+        window.location.href = '/dashboard'; // Ganti navigate dengan window.location.href
         setShowAlert(false);
       }, 1000);
     },
@@ -158,7 +156,7 @@ export const Login = () => {
 
               <div className="flex justify-center mt-4">
                 <button
-                  type="button" // Ganti dari <a> ke <button>
+                  type="button"
                   onClick={handleGoogleLogin}
                   className="btn btn-outline"
                 >
@@ -169,15 +167,11 @@ export const Login = () => {
             </form>
           )}
 
-          <div className="divider text-sm text-base-content opacity-70">Not a member?</div>
-          <p className="text-center text-sm">
-            <a href="#" className="link link-primary hover:link-primary-focus">
-              Create an account
-            </a>
-          </p>
+
         </div>
       </div>
     </div>
   );
 };
 
+export default Login;
