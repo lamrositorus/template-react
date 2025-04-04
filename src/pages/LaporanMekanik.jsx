@@ -4,7 +4,7 @@ import { FaChartLine, FaFilter } from 'react-icons/fa';
 import { Navbar } from '../pages/Header';
 import { API_Source } from '../global/Apisource';
 import Pagination from '../components/Pagination.jsx';
-
+import { format } from 'date-fns';
 export const LaporanMekanik = () => {
   const [filters, setFilters] = useState({
     mekanik_id: '',
@@ -168,7 +168,7 @@ export const LaporanMekanik = () => {
                             <td>{row.final_harga_jual}</td>
                             <td>{row.keuntungan}</td>
                             <td>{row.ongkos_pasang}</td>
-                            <td>{new Date(row.created_at).toLocaleDateString()}</td>
+                    {format(new Date(row.created_at), 'dd/MM/yy HH:mm')}
                           </tr>
                         ))
                       ) : (

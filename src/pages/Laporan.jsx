@@ -5,6 +5,7 @@ import { FaChartLine } from 'react-icons/fa';
 import Navbar from '../pages/Header';
 import { API_Source } from '../global/Apisource';
 import Pagination from '../components/Pagination.jsx';
+import { format } from 'date-fns';
 
 export const Laporan = () => {
   const [reportType, setReportType] = useState('daily');
@@ -236,7 +237,7 @@ export const Laporan = () => {
                             </td>
                             <td>{transaksi.total_pembayaran}</td>
                             <td>{transaksi.keuntungan}</td>
-                            <td>{new Date(transaksi.created_at).toLocaleDateString()}</td>
+                    {format(new Date(transaksi.created_at), 'dd/MM/yy HH:mm')}
                           </tr>
                         ))
                       ) : (
