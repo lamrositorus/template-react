@@ -253,7 +253,7 @@ export class API_Source {
       console.log('Raw update sparepart response:', text);
 
       if (!response.ok) {
-        const errorData = text ? JSON.parse(text) : { message: `Server error: ${response.status}` };
+        const errorData = await response.json();
         throw new Error(errorData.message);
       }
 
