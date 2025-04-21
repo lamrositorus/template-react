@@ -4,15 +4,18 @@ import { API_Source } from '../global/Apisource';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { FiShoppingCart } from 'react-icons/fi';
-import ConfirmModal from '../components/ConfirmationModalTransaction';
+import ConfirmModal from '../components/ConfirmationModalTransaction.jsx';
+import PrintConfirmModal from '../components/ModalPrint.jsx';
 import TotalProfit from '../components/TotalProfit.jsx';
 import TransactionForm from '../components/TransactionForm.jsx';
 import TransactionList from '../components/TransactionList.jsx';
-
+import { printReceipt } from '../utils/printer.jsx';
 
 export const TransactionPage = () => {
   const queryClient = useQueryClient();
   const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [showPrintModal, setShowPrintModal] = useState(false);
+  const [lastTransaksiId, setLastTransaksiId] = useState(null);
   const [formData, setFormData] = useState({
     nama_pelanggan: '',
     mekanik_id: '',
@@ -43,7 +46,18 @@ export const TransactionPage = () => {
 
   const createTransaksiMutation = useMutation({
     mutationFn: API_Source.createTransaksi,
-    onSuccess: () => {
+    onSuccess: (data) => {
+      console.log('✅ API createTransaksi result:', data);
+
+      if (!data || typeof data !== 'object') {
+        toast.error('Respons tidak valid dari server');
+        return;
+      }
+    
+      if (!data.id) {
+        toast.error('ID transaksi tidak ditemukan dalam response: ' + JSON.stringify(data));
+        return;
+      }
       queryClient.invalidateQueries({ queryKey: ['transaksi'] });
       toast.success('Transaksi berhasil dibuat!');
       setFormData({
@@ -55,6 +69,8 @@ export const TransactionPage = () => {
         ongkos_pasang: 0,
       });
       setShowConfirmModal(false);
+      setLastTransaksiId(data.id); // Simpan ID transaksi
+      setShowPrintModal(true); // Buka pop-up cetak
     },
     onError: (error) => {
       toast.error(`Gagal membuat transaksi: ${error.message}`);
@@ -71,7 +87,32 @@ export const TransactionPage = () => {
       ongkos_pasang: parseFloat(formData.ongkos_pasang) || 0,
     };
     console.log('Payload sent:', JSON.stringify(payload));
-    await createTransaksiMutation.mutateAsync(payload); // Gunakan mutateAsync untuk pastikan await
+    await createTransaksiMutation.mutateAsync(payload);
+  };
+
+  const handlePrint = async () => {
+    try {
+      if (!lastTransaksiId) {
+        throw new Error('ID transaksi tidak tersedia');
+      }
+      await printReceipt(lastTransaksiId);
+      toast.success('Struk berhasil dicetak!');
+    } catch (error) {
+      console.error('Print error:', error);
+      toast.error(`Gagal mencetak struk: ${error.message}`);
+      if (error.message.includes('No port selected')) {
+        toast.info('Silakan pilih port printer USB yang valid.');
+      } else if (error.message.includes('blocked by the Serial blocklist')) {
+        toast.info('Port printer diblokir. Gunakan koneksi USB atau periksa driver.');
+      }
+    }
+    setShowPrintModal(false);
+    setLastTransaksiId(null);
+  };
+
+  const skipPrint = () => {
+    setShowPrintModal(false);
+    setLastTransaksiId(null);
   };
 
   if (transaksiLoading || mekanikLoading || sparepartLoading) {
@@ -110,6 +151,12 @@ export const TransactionPage = () => {
         isOpen={showConfirmModal}
         onClose={() => setShowConfirmModal(false)}
         onConfirm={confirmTransaction}
+      />
+
+      <PrintConfirmModal
+        isOpen={showPrintModal}
+        onClose={skipPrint}
+        onConfirm={handlePrint}
       />
     </div>
   );

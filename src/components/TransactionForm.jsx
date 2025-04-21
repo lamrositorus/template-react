@@ -7,10 +7,20 @@ const TransactionForm = ({ formData, setFormData, sparepartData, mekanikData, on
 
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: type === 'checkbox' ? checked : value,
-    }));
+    setFormData((prev) => {
+      const updatedFormData = {
+        ...prev,
+        [name]: type === 'checkbox' ? checked : value,
+      };
+      // Jika is_grosir diubah, perbarui is_grosir semua item
+      if (name === 'is_grosir') {
+        updatedFormData.items = prev.items.map((item) => ({
+          ...item,
+          is_grosir: checked,
+        }));
+      }
+      return updatedFormData;
+    });
   };
 
   const handleNewItemChange = (e) => {
@@ -31,9 +41,28 @@ const TransactionForm = ({ formData, setFormData, sparepartData, mekanikData, on
       toast.error('Jumlah harus lebih besar dari 0.');
       return;
     }
+
+    // Validasi stok
+    const selectedSparepart = sparepartData?.data?.find((sp) => sp.id === newItem.sperpat_id);
+    if (!selectedSparepart) {
+      toast.error('Sparepart tidak ditemukan.');
+      return;
+    }
+    if (selectedSparepart.stok < jumlah) {
+      toast.error(`Stok ${selectedSparepart.nama} hanya ${selectedSparepart.stok}.`);
+      return;
+    }
+
     setFormData((prev) => ({
       ...prev,
-      items: [...prev.items, { sperpat_id: newItem.sperpat_id, jumlah }],
+      items: [
+        ...prev.items,
+        {
+          sperpat_id: newItem.sperpat_id,
+          jumlah,
+          is_grosir: prev.is_grosir, // Ikuti status global saat ditambahkan
+        },
+      ],
     }));
     setNewItem({ sperpat_id: '', jumlah: '' });
   };
@@ -45,19 +74,27 @@ const TransactionForm = ({ formData, setFormData, sparepartData, mekanikData, on
     }));
   };
 
+  const toggleItemDiscount = (index) => {
+    setFormData((prev) => ({
+      ...prev,
+      items: prev.items.map((item, i) =>
+        i === index ? { ...item, is_grosir: !item.is_grosir } : item
+      ),
+    }));
+  };
+
   const calculateTransaction = () => {
     const uang_masuk = parseFloat(formData.uang_masuk) || 0;
     const ongkos_pasang = parseFloat(formData.ongkos_pasang) || 0;
 
-    const total_pembayaran =
-      formData.items.reduce((sum, item) => {
-        const selectedSparepart = sparepartData?.data?.find((sp) => sp.id === item.sperpat_id);
-        if (!selectedSparepart) return sum;
-        const harga_jual = formData.is_grosir
-          ? selectedSparepart.harga_jual * 0.9
-          : selectedSparepart.harga_jual;
-        return sum + harga_jual * item.jumlah;
-      }, 0) + ongkos_pasang;
+    const total_pembayaran = formData.items.reduce((sum, item) => {
+      const selectedSparepart = sparepartData?.data?.find((sp) => sp.id === item.sperpat_id);
+      if (!selectedSparepart) return sum;
+      const harga_jual = item.is_grosir
+        ? selectedSparepart.harga_jual * 0.9
+        : selectedSparepart.harga_jual;
+      return sum + harga_jual * item.jumlah;
+    }, 0) + ongkos_pasang;
 
     const uang_kembalian = uang_masuk - total_pembayaran;
     return { total_pembayaran, uang_kembalian };
@@ -67,7 +104,7 @@ const TransactionForm = ({ formData, setFormData, sparepartData, mekanikData, on
 
   const validateAndSubmit = (e) => {
     e.preventDefault();
-    console.log('formData before validation:', formData); // Debugging
+    console.log('formData before validation:', formData);
 
     const uang_masuk = parseFloat(formData.uang_masuk);
     const ongkos_pasang = parseFloat(formData.ongkos_pasang) || 0;
@@ -92,6 +129,19 @@ const TransactionForm = ({ formData, setFormData, sparepartData, mekanikData, on
         `Uang masuk (Rp${uang_masuk.toLocaleString('id-ID')}) harus lebih besar atau sama dengan total pembayaran (Rp${total_pembayaran.toLocaleString('id-ID')}).`,
       );
       return;
+    }
+
+    // Validasi stok untuk semua item
+    for (const item of formData.items) {
+      const sparepart = sparepartData?.data?.find((sp) => sp.id === item.sperpat_id);
+      if (!sparepart) {
+        toast.error('Salah satu sparepart tidak ditemukan.');
+        return;
+      }
+      if (sparepart.stok < item.jumlah) {
+        toast.error(`Stok ${sparepart.nama} hanya ${sparepart.stok}.`);
+        return;
+      }
     }
 
     onSubmit();
@@ -158,7 +208,7 @@ const TransactionForm = ({ formData, setFormData, sparepartData, mekanikData, on
                 <option value="">Pilih Sparepart</option>
                 {sparepartData?.data?.map((sp) => (
                   <option key={sp.id} value={sp.id}>
-                    {sp.nama} (Stok: {sp.stok}) (Harga: Rp.{sp.harga_jual})
+                    {sp.nama} (Stok: {sp.stok}) (Harga: Rp{sp.harga_jual.toLocaleString('id-ID')})
                   </option>
                 ))}
               </select>
@@ -189,6 +239,7 @@ const TransactionForm = ({ formData, setFormData, sparepartData, mekanikData, on
                     <th className="text-xs sm:text-sm">Nama Barang</th>
                     <th className="text-xs sm:text-sm">Jumlah</th>
                     <th className="text-xs sm:text-sm">Harga Satuan</th>
+                    {formData.is_grosir && <th className="text-xs sm:text-sm">Diskon 10%</th>}
                     <th className="text-xs sm:text-sm">Subtotal</th>
                     <th className="text-xs sm:text-sm">Aksi</th>
                   </tr>
@@ -197,20 +248,37 @@ const TransactionForm = ({ formData, setFormData, sparepartData, mekanikData, on
                   {formData.items.map((item, index) => {
                     const sparepart = sparepartData?.data?.find((sp) => sp.id === item.sperpat_id);
                     const harga_jual = sparepart
-                      ? formData.is_grosir
+                      ? item.is_grosir
                         ? sparepart.harga_jual * 0.9
                         : sparepart.harga_jual
                       : 0;
                     const subtotal = harga_jual * item.jumlah;
                     return (
-                      <tr key={index}>
+                      <tr key={index} className={item.is_grosir ? ' bg-opacity-10' : ''}>
                         <td className="text-xs sm:text-sm">{sparepart?.nama || 'N/A'}</td>
                         <td className="text-xs sm:text-sm">{item.jumlah}</td>
                         <td className="text-xs sm:text-sm">
-                          Rp{(harga_jual || 0).toLocaleString('id-ID')}
+                          {item.is_grosir && (
+                            <span className="line-through text-gray-500 mr-1">
+                              Rp{(sparepart?.harga_jual || 0).toLocaleString('id-ID')}
+                            </span>
+                          )}
+                          Rp{harga_jual.toLocaleString('id-ID')}
                         </td>
+                        {formData.is_grosir && (
+                          <td className="text-xs sm:text-sm">
+                            <div className="tooltip" data-tip="Centang untuk diskon 10%">
+                              <input
+                                type="checkbox"
+                                checked={item.is_grosir}
+                                onChange={() => toggleItemDiscount(index)}
+                                className="checkbox checkbox-success"
+                              />
+                            </div>
+                          </td>
+                        )}
                         <td className="text-xs sm:text-sm">
-                          Rp{(subtotal || 0).toLocaleString('id-ID')}
+                          Rp{subtotal.toLocaleString('id-ID')}
                         </td>
                         <td>
                           <button
@@ -241,6 +309,7 @@ const TransactionForm = ({ formData, setFormData, sparepartData, mekanikData, on
               <span className="label-text ml-2">Grosir (Diskon 10%)</span>
             </label>
           </div>
+
           <div className="form-control">
             <label className="label">
               <span className="label-text flex items-center gap-2">🔧 Ongkos Pasang</span>
@@ -255,6 +324,7 @@ const TransactionForm = ({ formData, setFormData, sparepartData, mekanikData, on
               step="0.01"
             />
           </div>
+
           <div className="form-control">
             <label className="label">
               <span className="label-text flex items-center gap-2">
@@ -272,8 +342,6 @@ const TransactionForm = ({ formData, setFormData, sparepartData, mekanikData, on
               required
             />
           </div>
-
-
 
           <div className="form-control">
             <label className="label">
@@ -298,7 +366,7 @@ const TransactionForm = ({ formData, setFormData, sparepartData, mekanikData, on
             <input
               type="text"
               value={`Rp${(uang_kembalian || 0).toLocaleString('id-ID')}`}
-              className={`input input-bordered w-full ${uang_kembalian < 0 ? '' : ''}`}
+              className={`input input-bordered w-full ${uang_kembalian < 0 ? 'input-error' : ''}`}
               readOnly
             />
           </div>

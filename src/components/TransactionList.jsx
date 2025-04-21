@@ -1,7 +1,10 @@
 import React, { useState } from 'react';
-import { FiList } from 'react-icons/fi';
+import { FiList, FiPrinter } from 'react-icons/fi';
 import Pagination from './Pagination';
 import { format } from 'date-fns';
+import { API_Source } from '../global/Apisource';
+import { toast } from 'react-toastify';
+import { printReceipt } from '../utils/printer';
 
 const TransactionList = ({ transaksiData, sparepartData }) => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -17,10 +20,22 @@ const TransactionList = ({ transaksiData, sparepartData }) => {
     setCurrentPage(page);
   };
 
-  // Fungsi untuk mendapatkan nama sparepart berdasarkan sperpat_id
   const getSparepartName = (sperpatId) => {
     const sparepart = sparepartData?.data?.find((sp) => sp.id === sperpatId);
     return sparepart?.nama || 'N/A';
+  };
+
+  const handlePrint = async (transaksiId) => {
+    try {
+      console.log(`Initiating print for transaksi ID: ${transaksiId}`);
+      const printData = await API_Source.printTransaksi(transaksiId);
+      console.log("Print data received:", JSON.stringify(printData, null, 2));
+      await printReceipt(transaksiId); // Panggil dengan ID
+      toast.success("Struk berhasil dicetak!");
+    } catch (error) {
+      console.error("Print error:", error);
+      toast.error(`Gagal mencetak struk: ${error.message}`);
+    }
   };
 
   return (
@@ -40,6 +55,7 @@ const TransactionList = ({ transaksiData, sparepartData }) => {
                 <th className="text-center">Total</th>
                 <th className="text-center">Keuntungan</th>
                 <th className="text-center">Tanggal</th>
+                <th className="text-center">Aksi</th>
               </tr>
             </thead>
             <tbody>
@@ -52,21 +68,33 @@ const TransactionList = ({ transaksiData, sparepartData }) => {
                       <ul className="list-disc pl-4 text-left">
                         {transaksi.items.map((item, index) => (
                           <li key={index}>
-                            {getSparepartName(item.sperpat_id)}  - Jumlah: {item.jumlah}, Harga: {item.harga_jual}
+                            {getSparepartName(item.sperpat_id)} - Jumlah: {item.jumlah}, Harga: {item.harga_jual.toLocaleString("id-ID")}
                           </li>
                         ))}
                       </ul>
                     </td>
-                    <td className="text-center">{transaksi.total_pembayaran}</td>
-                    <td className="text-center">{transaksi.keuntungan}</td>
+                    <td className="text-center">{transaksi.total_pembayaran.toLocaleString("id-ID")}</td>
+                    <td className="text-center">{transaksi.keuntungan.toLocaleString("id-ID")}</td>
                     <td className="text-center">
                       {format(new Date(transaksi.created_at), 'dd/MM/yy HH:mm')}
+                    </td>
+                    <td className="text-center">
+                      <button
+                        className="btn btn-ghost btn-sm"
+                        onClick={() => handlePrint(transaksi.id)}
+                        title="Cetak Struk"
+                        aria-label={`Cetak struk untuk transaksi ${transaksi.id}`}
+                      >
+                        <FiPrinter className="text-primary" />
+                      </button>
                     </td>
                   </tr>
                 ))
               ) : (
                 <tr>
-                  <td colSpan="6" className="text-center">Tidak ada data transaksi</td>
+                  <td colSpan="7" className="text-center">
+                    Tidak ada data transaksi
+                  </td>
                 </tr>
               )}
             </tbody>

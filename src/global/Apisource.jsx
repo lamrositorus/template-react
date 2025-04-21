@@ -45,7 +45,7 @@ export class API_Source {
   static async getDashboard(params = {}) {
     try {
       const token = localStorage.getItem('token');
-      const url = new URL(Endpoint.dashboard); // Misalnya, http://localhost:5000/dashboard
+      const url = new URL(Endpoint.dashboard);
       Object.keys(params).forEach((key) => url.searchParams.append(key, params[key]));
 
       console.log('Request URL:', url.toString()); // Debug
@@ -114,6 +114,8 @@ export class API_Source {
 
   static async createMekanik(nama) {
     try {
+      const payload = nama
+      console.log('payload yg dikirim: ', payload)
       const response = await fetch(Endpoint.inventarisMekanik, {
         method: 'POST',
         headers: {
@@ -177,6 +179,8 @@ export class API_Source {
 
   static async createStokMasuk(sperpat_id, jumlah, keterangan) {
     try {
+      const payload = {sperpat_id, jumlah, keterangan}
+      console.log('payload yg dikirim: ',payload)
       const response = await fetch(Endpoint.inventarisStok, {
         method: 'POST',
         headers: {
@@ -219,24 +223,28 @@ export class API_Source {
   }
   static async createSparepart(nama, kode, kategori_id, stok = 0) {
     try {
-      const response = await fetch(Endpoint.inventarisSparepart, {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ nama, kode, kategori_id, stok }),
-      });
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message);
-      }
-      const data = await response.json();
-      return data.data;
+        const payload = { nama, kode, kategori_id, stok };
+        console.log('Payload dikirim ke /sparepart:', payload);
+        const response = await fetch(Endpoint.inventarisSparepart, {
+            method: 'POST',
+            headers: {
+                Authorization: `Bearer ${localStorage.getItem('token')}`,
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(payload),
+        });
+        if (!response.ok) {
+            const errorData = await response.json();
+            console.error('Respons error dari backend:', errorData);
+            throw new Error(errorData.message);
+        }
+        const data = await response.json();
+        return data.data;
     } catch (error) {
-      throw new Error(error.message);
+        console.error('Error di createSparepart:', error);
+        throw new Error(error.message);
     }
-  }
+}
   static async updateSparepart(id, nama, kode, kategori_id, stok) {
     try {
       const token = localStorage.getItem('token');
@@ -607,5 +615,26 @@ export class API_Source {
       console.error('Get laporan mekanik error:', error);
       throw new Error(error.message);
     }
+  }
+
+  static async printTransaksi(id) {
+    console.log(`Fetching print data for transaksi ID: ${id}`);
+    const token = localStorage.getItem('token');
+    if (!token) {
+      throw new Error('No token found. Please login again.');
+    }
+    const response = await fetch(`${Endpoint.printId(id)}`, {
+      method: 'GET',
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+    });
+    const data = await response.json();
+    console.log('Print API response:', data);
+    if (!response.ok) {
+      throw new Error(data.message || 'Failed to fetch print data');
+    }
+    return data.data;
   }
 }

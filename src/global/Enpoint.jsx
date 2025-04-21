@@ -1,5 +1,5 @@
-// const BASE_URL = 'http://localhost:5000';
-const BASE_URL = 'https://sparepart-alma.vercel.app';
+export const BASE_URL = 'http://localhost:5000';
+// const BASE_URL = 'https://sparepart-alma.vercel.app';
 export const Endpoint = {
   login: `${BASE_URL}/user/login`,
   dashboard: `${BASE_URL}/dashboard`,
@@ -14,4 +14,5 @@ export const Endpoint = {
   transaksi: `${BASE_URL}/transaksi`,
   laporan: `${BASE_URL}/laporan`,
   laporanMekanik: `${BASE_URL}/laporan_penjualan_mekanik`,
+  printId: (id) => `${BASE_URL}/transaksi/${id}/print`
 };
